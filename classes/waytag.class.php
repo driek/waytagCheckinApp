@@ -61,7 +61,7 @@ class Waytag
 		$queryString = "http://devzone.waytag.com/cgi-bin/wspd_cgi.sh/WService=wsb_wtdev/rest.w?rqDataMode=VAR/XML&$login&rqversion=1&rqappkey=".$config["waytag_app_key"]."|".$config["waytag_app_password"]."&rqservice=wtutility:".$service;
 		foreach ($parameters as $key => $parameter)
 		{
-			$queryString .= "&" . urlencode($key) . "=" . urldecode($parameter);
+			$queryString .= "&" . urlencode($key) . "=" . urlencode($parameter);
 		}
 		$xml->open($queryString);
 		$text = "";
