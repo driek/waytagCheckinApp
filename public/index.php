@@ -236,8 +236,11 @@ function ajaxCall(url, parameters, resultFunction)
 
 function panMapToWayTag(wayTagID)
 {
-	var markerlatlon = new google.maps.LatLng(businesses[wayTagID]["dWayTagLatitude"], businesses[wayTagID]["dWayTagLongitude"]);
-	map.panTo(markerlatlon);
+	if (businesses[wayTagID])
+	{
+		var markerlatlon = new google.maps.LatLng(businesses[wayTagID]["dWayTagLatitude"], businesses[wayTagID]["dWayTagLongitude"]);
+		map.panTo(markerlatlon);
+	}
 }
 
 getCheckinHistory();
