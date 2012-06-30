@@ -123,5 +123,15 @@ class Waytag
 		return $return_result;
 	}
 	
+	public static function updateMobileLocation($username, $password, $latitude, $longitude)
+	{
+		if($latitude && $longitude && $username && $password)
+		{
+			$mobileWaytag = Waytag::getMyMobileWaytag($username, $password);
+			$parameters["ttWayTag"] = "<ttWayTag><ttWayTagRow><dWayTagObj>".$mobileWaytag["dWayTagObj"]."</dWayTagObj><cCustomReference>null</cCustomReference><dSubscriberObj>?</dSubscriberObj><cCountryKey>null</cCountryKey><cTypeAcronymKey>null</cTypeAcronymKey><cBusinessCategoryKey>null</cBusinessCategoryKey><cStatusKey>null</cStatusKey><cPhyAddressCountryKey>null</cPhyAddressCountryKey><cPosAddressCountryKey>null</cPosAddressCountryKey><dWayTagLatitude>".$latitude."</dWayTagLatitude><dWayTagLongitude>".$longitude."</dWayTagLongitude></ttWayTagRow></ttWayTag>";
+			Waytag::makeRequest($username, $password, "UpdateWaytagTT", $parameters);
+		}
+	}
+	
 }
 ?>
