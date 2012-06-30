@@ -27,5 +27,15 @@ switch ($method)
 		$history = $user->getCheckinHistory();
 		include("waytagsCheckinHistory.template.php");
 		break;
+	case "updateMyMobileWaytag":
+		$username = $_SESSION["username"];
+		$password = $_SESSION["password"];
+		$latitude = $_POST["latitude"];
+		$longitude = $_POST["longitude"];
+		$mobileWaytag = Waytag::getMyMobileWaytag($username, $password);
+		$parameters = array();
+		$parameters["ttWayTag"] = "<ttWayTag><ttWayTagRow><dWayTagObj>".$mobileWaytag["dWayTagObj"]."</dWayTagObj><cCustomReference>null</cCustomReference><dSubscriberObj>?</dSubscriberObj><cCountryKey>null</cCountryKey><cTypeAcronymKey>null</cTypeAcronymKey><cBusinessCategoryKey>null</cBusinessCategoryKey><cStatusKey>null</cStatusKey><cPhyAddressCountryKey>null</cPhyAddressCountryKey><cPosAddressCountryKey>null</cPosAddressCountryKey><dWayTagLatitude>".$latitude."</dWayTagLatitude><dWayTagLongitude>".$longitude."</dWayTagLongitude></ttWayTagRow></ttWayTag>";
+		Waytag::makeRequest($username, $password, "UpdateWaytagTT", $parameters);
+		break;
 }
 ?>

@@ -62,7 +62,12 @@ myMobileWaytag["waytagTag"] = "<?= $myMobileWaytag["cCustomReference"]?>";
 makerlatlon=new google.maps.LatLng(myMobileWaytag["latitude"], myMobileWaytag["longitude"]);
 mobileMarkerImage = new google.maps.MarkerImage("http://maps.google.com/mapfiles/kml/pal3/icon52.png", new google.maps.Size(32, 32), new google.maps.Point(0,0), new google.maps.Point(16,16));
 mobileMarkerImageShadow = new google.maps.MarkerImage("http://maps.google.com/mapfiles/kml/pal3/icon52s.png", new google.maps.Size(59, 32), new google.maps.Point(0,0), new google.maps.Point(17,16));
-marker=new google.maps.Marker({position:makerlatlon,map:map,title:myMobileWaytag["displayName"],icon:mobileMarkerImage, shadow:mobileMarkerImageShadow, flat:true});
+marker=new google.maps.Marker({position:makerlatlon,map:map,title:myMobileWaytag["displayName"],icon:mobileMarkerImage, shadow:mobileMarkerImageShadow, flat:true, draggable:true});
+google.maps.event.addListener(marker, 'dragend', function(event) {
+	var latlong = event.latLng;
+	updateMyWaytag(""+latlong.lat(), ""+latlong.lng());
+});
+
 
 infoWindow = new google.maps.InfoWindow();
 myMobileWaytag["marker"] = marker;
@@ -241,6 +246,17 @@ function panMapToWayTag(wayTagID)
 		var markerlatlon = new google.maps.LatLng(businesses[wayTagID]["dWayTagLatitude"], businesses[wayTagID]["dWayTagLongitude"]);
 		map.panTo(markerlatlon);
 	}
+}
+
+function updateMyWaytag(latitude, longitude)
+{
+	resultFunction = function()	{
+		  if (this.readyState==4 && this.status==200)
+		  {
+			  document.getElementById("debug").innerHTML = this.responseText;
+		  }
+	};
+	ajaxCall("waytags.php", {"function":"updateMyMobileWaytag", "latitude":latitude, "longitude":longitude}, resultFunction);
 }
 
 getCheckinHistory();

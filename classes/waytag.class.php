@@ -17,7 +17,7 @@ class Waytag
 	public static function validUser($username, $password)
 	{
 		include("../config/config.inc.php");
-		$querystring = "http://devzone.waytag.com/cgi-bin/wspd_cgi.sh/WService=wsb_wtdev/rest.w?rqDataMode=VAR/XML&rqAuthentication=user:".$username."|".$password."&rqversion=1&rqappkey=".$config["waytag_app_key"]."|".$config["waytag_app_password"]."&rqservice=wtutility:GetMyWaytagsSQ";
+		$querystring = "https://devzone.waytag.com/cgi-bin/wspd_cgi.sh/WService=wsb_wtdev/rest.w?rqDataMode=VAR/XML&rqAuthentication=user:".$username."|".$password."&rqversion=1&rqappkey=".$config["waytag_app_key"]."|".$config["waytag_app_password"]."&rqservice=wtutility:GetMyWaytagsSQ";
 		$xml = new XMLReader;
 		$xml->open($querystring);
 		$attribute = $value = "";
@@ -58,7 +58,7 @@ class Waytag
 		$xml = new XMLReader();
 		$login = "rqAuthentication=user:$username|$password";
 		if (isset($_SESSION["waytag_session_id"])){$login = "rqAuthentication=".$_SESSION["waytag_session_id"];}
-		$queryString = "http://devzone.waytag.com/cgi-bin/wspd_cgi.sh/WService=wsb_wtdev/rest.w?rqDataMode=VAR/XML&$login&rqversion=1&rqappkey=".$config["waytag_app_key"]."|".$config["waytag_app_password"]."&rqservice=wtutility:".$service;
+		$queryString = "https://devzone.waytag.com/cgi-bin/wspd_cgi.sh/WService=wsb_wtdev/rest.w?rqDataMode=VAR/XML&$login&rqversion=1&rqappkey=".$config["waytag_app_key"]."|".$config["waytag_app_password"]."&rqservice=wtutility:".$service;
 		foreach ($parameters as $key => $parameter)
 		{
 			$queryString .= "&" . urlencode($key) . "=" . urlencode($parameter);
