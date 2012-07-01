@@ -74,12 +74,6 @@ myMobileWaytag["marker"] = marker;
 <?php //google.maps.event.addListener(marker, 'dragend', function(event){changeMarker(wayTag, event.latLng);}); 
 ?>
 
-function panMapToWayTag(wayTagID)
-{
-	var markerlatlon = new google.maps.LatLng(wayTags[wayTagID]["latitude"], wayTags[wayTagID]["longitude"]);
-	map.panTo(markerlatlon);
-}
-
 var businesses = new Array();
 <?php 
 foreach ($closestBusinesses as $business)
@@ -213,30 +207,33 @@ function getCheckinHistory()
 	ajaxCall("waytags.php", {"function":"getCheckinHistory"}, resultFunction);
 }
 
-function ajaxCall(url, parameters, resultFunction)
+function ajaxCall(url, parameters, resultFunction, synchronous)
 {
-	var xmlhttp;
-	if (window.XMLHttpRequest)
-	{// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	}
-	else
-	{// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	xmlhttp.onreadystatechange=resultFunction;
-	xmlhttp.open("POST",url,true);
-	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	parametersUrl = "";
-	count = 0;
-	for (i in parameters)
+	if (!synchronous)
 	{
-		if (count > 0)
-			parametersUrl += "&";
-		parametersUrl += i + "=" +parameters[i];
-		count++;
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp=new XMLHttpRequest();
+		}
+		else
+		{// code for IE6, IE5
+		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xmlhttp.onreadystatechange=resultFunction;
+		xmlhttp.open("POST",url,true);
+		xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+		parametersUrl = "";
+		count = 0;
+		for (i in parameters)
+		{
+			if (count > 0)
+				parametersUrl += "&";
+			parametersUrl += i + "=" +parameters[i];
+			count++;
+		}
+		xmlhttp.send(parametersUrl);
 	}
-	xmlhttp.send(parametersUrl);
 }
 
 function panMapToWayTag(wayTagID)
@@ -250,15 +247,37 @@ function panMapToWayTag(wayTagID)
 
 function updateMyWaytag(latitude, longitude)
 {
+	myMobileWaytag["latitude"] = latitude;
+	myMobileWaytag["longitude"] = longitude;
 	resultFunction = function()	{
 		  if (this.readyState==4 && this.status==200)
 		  {
 			  document.getElementById("debug").innerHTML = this.responseText;
+			  var marker = myMobileWaytag["marker"];
+			  var markerlatlon = new google.maps.LatLng(latitude, longitude);
+			  marker.setPosition(markerlatlon);
+			  map.panTo(markerlatlon);
 		  }
 	};
 	ajaxCall("waytags.php", {"function":"updateMyMobileWaytag", "latitude":latitude, "longitude":longitude}, resultFunction);
 }
 
+function getLocation()
+{
+	if (navigator.geolocation)
+	{
+		navigator.geolocation.getCurrentPosition(showPosition);
+	}
+}
+
+function showPosition(position)
+{
+	lat = position.coords.latitude;
+	lon = position.coords.longitude;
+	updateMyWaytag(lat, lon);
+}
+
+getLocation();
 getCheckinHistory();
 displayBusinesses();
 </script>
