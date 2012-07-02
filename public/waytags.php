@@ -37,7 +37,7 @@ switch ($method)
 	case "getClosestBusinesses":
 		$username = $_SESSION["username"];
 		$password = $_SESSION["password"];
-		$businesses = Waytag::getMyClosestBusinessWaytags($username, $password, 1);
+		$businesses = Waytag::getMyClosestBusinessWaytags($username, $password);
 		header("Content-type: application/json");
 		echo "{";
 		$i = 0;

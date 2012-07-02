@@ -3,6 +3,7 @@ require_once("../classes/database.class.php");
 require_once("../classes/debug.class.php");
 class Waytag
 {
+	
 	public static function getMyWaytags($username, $password)
 	{
 		return Waytag::makeRequest($username, $password, "GetMyWaytagsSQ");
@@ -11,7 +12,9 @@ class Waytag
 	public static function getMyMobileWaytag($username, $password)
 	{
 		// cResultLog = NO_MOBILE_WAYTAG_FOUND
-		return array_pop(Waytag::makeRequest($username, $password, "GetMyMobileWaytags"));
+		$returnResult = array_pop(Waytag::makeRequest($username, $password, "GetMyMobileWaytags"));
+		$_SESSION["mobileWaytagID"] = $returnResult["dWayTagObj"];
+		return $returnResult;
 	}
 	
 	public static function validUser($username, $password)
@@ -55,15 +58,22 @@ class Waytag
 		return $returnResult;
 	}
 	
-	public static function getMyClosestBusinessWaytags($username, $password)
+	public static function getMyClosestBusinessWaytags($username, $password, $distance = 10)
 	{
-		$myMobileWaytag = Waytag::getMyMobileWaytag($username, $password);
-		$latitude = $myMobileWaytag["dWayTagLatitude"];
-		$longitude = $myMobileWaytag["dWayTagLongitude"];
+		if (!$_SESSION["mobileWaytagID"] || !strlen(trim($_SESSION["mobileWaytagID"])))
+		{
+			$myMobileWaytag = Waytag::getMyMobileWaytag($username, $password);
+			$mobileWaytagobjId = $myMobileWaytag["dWayTagObj"];
+		}
+		else
+		{
+			$mobileWaytagobjId = $_SESSION["mobileWaytagID"];
+		}
 		$parameters["ipdSearchRange"] = $distance;
-		$parameters["ipdRefLatitude"] = $latitude;
-		$parameters["ipdRefLongitude"] = $longitude;
+		$parameters["ipdRefLatitude"] = "?";
+		$parameters["ipdRefLongitude"] = "?";
 		$parameters["ipiNumberRequired"] = 10;
+		$parameters["ipdRefWayTagObj"] = $mobileWaytagobjId;
 		$returnResult = Waytag::makeRequest($username, $password, "FindWaytagsByProximitySrtSQ", $parameters);
 		if ($returnResult && $returnResult[0]["cResultLog"] == "PROXIMITY_RESULT_NOT_FOUND")
 			$returnResult = array();

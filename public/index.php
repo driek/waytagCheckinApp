@@ -11,7 +11,7 @@ require_once("../config/config.inc.php");
 require_once("../classes/user.class.php");
 $myMobileWaytag = Waytag::getMyMobileWaytag($username, $password);
 //$closestBusinesses = Waytag::getClosestBusinessWaytags($username, $password, $myMobileWaytag["dWayTagLatitude"], $myMobileWaytag["dWayTagLongitude"]);
-$closestBusinesses = Waytag::getMyClosestBusinessWaytags($username, $password, 15);
+$closestBusinesses = Waytag::getMyClosestBusinessWaytags($username, $password, 1);
 ?>
 <html>
 <head>
