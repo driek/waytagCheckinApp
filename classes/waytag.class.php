@@ -49,7 +49,25 @@ class Waytag
 		$parameters["ipdRefLatitude"] = $latitude;
 		$parameters["ipdRefLongitude"] = $longitude;
 		$parameters["ipiNumberRequired"] = 10;
-		return Waytag::makeRequest($username, $password, "FindWaytagsByProximitySrtSQ", $parameters);
+		$returnResult = Waytag::makeRequest($username, $password, "FindWaytagsByProximitySrtSQ", $parameters);
+		if ($returnResult && $returnResult[0]["cResultLog"] == "PROXIMITY_RESULT_NOT_FOUND")
+			$returnResult = array();
+		return $returnResult;
+	}
+	
+	public static function getMyClosestBusinessWaytags($username, $password)
+	{
+		$myMobileWaytag = Waytag::getMyMobileWaytag($username, $password);
+		$latitude = $myMobileWaytag["dWayTagLatitude"];
+		$longitude = $myMobileWaytag["dWayTagLongitude"];
+		$parameters["ipdSearchRange"] = $distance;
+		$parameters["ipdRefLatitude"] = $latitude;
+		$parameters["ipdRefLongitude"] = $longitude;
+		$parameters["ipiNumberRequired"] = 10;
+		$returnResult = Waytag::makeRequest($username, $password, "FindWaytagsByProximitySrtSQ", $parameters);
+		if ($returnResult && $returnResult[0]["cResultLog"] == "PROXIMITY_RESULT_NOT_FOUND")
+			$returnResult = array();
+		return $returnResult;
 	}
 	
 	public static function makeRequest($username, $password, $service, $parameters = array())

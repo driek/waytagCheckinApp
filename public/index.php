@@ -10,7 +10,8 @@ require_once("../classes/waytag.class.php");
 require_once("../config/config.inc.php");
 require_once("../classes/user.class.php");
 $myMobileWaytag = Waytag::getMyMobileWaytag($username, $password);
-$closestBusinesses = Waytag::getClosestBusinessWaytags($username, $password, $myMobileWaytag["dWayTagLatitude"], $myMobileWaytag["dWayTagLongitude"]);
+//$closestBusinesses = Waytag::getClosestBusinessWaytags($username, $password, $myMobileWaytag["dWayTagLatitude"], $myMobileWaytag["dWayTagLongitude"]);
+$closestBusinesses = Waytag::getMyClosestBusinessWaytags($username, $password, 15);
 ?>
 <html>
 <head>
@@ -66,6 +67,7 @@ marker=new google.maps.Marker({position:makerlatlon,map:map,title:myMobileWaytag
 google.maps.event.addListener(marker, 'dragend', function(event) {
 	var latlong = event.latLng;
 	updateMyWaytag(""+latlong.lat(), ""+latlong.lng());
+	refreshWaytags();
 });
 
 
@@ -277,9 +279,39 @@ function showPosition(position)
 	updateMyWaytag(lat, lon);
 }
 
+function refreshWaytags()
+{
+	var newBusinesses = new Array();
+	for (i in businesses)
+	{
+		//businesses[i]["marker"].setMap(null);
+	}
+	resultFunction = function()	{
+		  if (this.readyState==4 && this.status==200)
+		  {
+			  newBusinesses = JSON.parse(this.responseText);
+			  appendBusinesses(newBusinesses);
+			  displayBusinesses();
+		  }
+	};
+	ajaxCall("waytags.php",{"function":"getClosestBusinesses"}, resultFunction);
+}
+
+function appendBusinesses(newBusinesses)
+{
+	for (i in newBusinesses)
+	{
+		if (businesses[i] == null)
+		{
+			businesses[i] = newBusinesses[i];
+		}
+	}
+}
+
 getLocation();
 getCheckinHistory();
 displayBusinesses();
 </script>
+<button type="button" onclick="refreshWaytags();">Update data!</button>
 </body>
 </html>

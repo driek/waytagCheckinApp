@@ -34,5 +34,27 @@ switch ($method)
 		$password = $_SESSION["password"];
 		Waytag::updateMobileLocation($username, $password, $latitude, $longitude);
 		break;
+	case "getClosestBusinesses":
+		$username = $_SESSION["username"];
+		$password = $_SESSION["password"];
+		$businesses = Waytag::getMyClosestBusinessWaytags($username, $password, 1);
+		header("Content-type: application/json");
+		echo "{";
+		$i = 0;
+		foreach ($businesses as $business)
+		{
+			$j = 0;
+			echo (($i>0)?",":"") . '"'.$business["dWayTagObj"].'" : ' . "{";
+			foreach ($business as $attribute => $value)
+			{
+				echo (($j>0)?",":"");
+				echo "\"$attribute\" : \"$value\"";
+				$j++;
+			}
+			echo "}";
+			$i++;
+		}
+		echo "}";
+		break;
 }
 ?>
