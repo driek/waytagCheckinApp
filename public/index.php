@@ -96,7 +96,8 @@ function displayBusinesses()
 	for (i in businesses)
 	{
 		var business = businesses[i];
-		
+		if (business["marker"])
+			continue;
 		makerlatlon=new google.maps.LatLng(business["dWayTagLatitude"], business["dWayTagLongitude"]);
 		marker=new google.maps.Marker({position:makerlatlon,map:map,title:business["cDisplayName"]});
 
@@ -290,6 +291,7 @@ function refreshWaytags()
 		  if (this.readyState==4 && this.status==200)
 		  {
 			  newBusinesses = JSON.parse(this.responseText);
+			  // Not just replace the previous businesses, but extend it with new ones.
 			  appendBusinesses(newBusinesses);
 			  displayBusinesses();
 		  }
